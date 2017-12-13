@@ -16,6 +16,7 @@ var dbx = new Dropbox({ accessToken: config.accessToken });
 //var date = new Date();
 //console.log(date.toString());
 
+//900000
 
 dbx.filesGetMetadata({path: '/dolphin/acmemorycard.usa.raw'})
     .then(function(response) {
@@ -28,8 +29,6 @@ dbx.filesGetMetadata({path: '/dolphin/acmemorycard.usa.raw'})
       console.log(date.toString());
       dbx.usersGetAccount({account_id: response.sharing_info.modified_by})
         .then(function(response2){
-          if(response2.name.given_name=="Júlia")
-            console.log("Jyurei");
           else console.log(response2.name.given_name);
         })
     })
