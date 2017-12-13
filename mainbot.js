@@ -2,6 +2,18 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const config = require("./config.json");
+const http = require('http');
+const express = require('express');
+const app = express();
+
+app.get("/", (request, response) => {
+  console.log(Date.now() + " Ping Received");
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
 
 //Last user
 var lastUser;
@@ -17,7 +29,6 @@ client.on('presenceUpdate', (oldMember, newMember) => {
   if(lastUser == newMember.user.username)
     return;
 
-  var i = 0;
   if(newMember.presence.game!=null){
     if(newMember.presence.game.name=="Dolphin"){
         let guild = client.guilds.find("name", "SmashRS");
