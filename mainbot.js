@@ -6,6 +6,11 @@ const http = require('http');
 const express = require('express');
 const app = express();
 
+var Dropbox = require('dropbox');
+const config = require("./config.json");
+var dbx = new Dropbox({ accessToken: config.accessToken });
+
+
 app.get("/", (request, response) => {
   console.log(Date.now() + " Ping Received");
   response.sendStatus(200);
@@ -49,6 +54,39 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     }
   }
 });
+
+client.on("message", (message) => {
+  if (message.content.startsWith("!save")) {
+    var date, name, stringdate;
+
+    dbx.filesGetMetadata({path: '/dolphin/acmemorycard.usa.raw'})
+        .then(function(response) {
+          date = new Date(response.server_modified);
+          stringdate = date.toString().split("GMT")[0];
+          dbx.usersGetAccount({account_id: response.sharing_info.modified_by})
+            .then(function(response2){
+              if(response2.name.given_name=="Júlia"){
+                name = "Jyurei";
+              }else if(response2.name.given_name=="João"){
+                name = "Lampi";
+              }else if(response2.name.given_name=="Shao"){
+                name = "Shao";
+              }else if(response2.name.given_name=="Artur"){
+                name = "Artur";
+              }else if(response2.name.given_name=="Lucas"){
+                name = "Lucas";
+              }else if(response2.name.given_name=="Giancarlo"){
+                name = "Gian";
+              }else name = response2.name.given_name;
+              client.channels.get('389933420270321664').send('Status atual do save! \n\n' + 'Atualizado em' + stringdate + '\n Atualizado por' + name);
+            })
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+  }
+});
+
 
 //Deprecated old alert
 //client.on('presenceUpdate', (oldMember, newMember) => {
